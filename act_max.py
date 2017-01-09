@@ -5,6 +5,7 @@ Anh Nguyen <anh.ng8@gmail.com>
 '''
 import os
 os.environ['GLOG_minloglevel'] = '2'  # suprress Caffe verbose prints
+import shutil
 
 import settings
 import site
@@ -38,7 +39,7 @@ def get_code(path, layer):
 
   # set up the inputs for the net: 
   batch_size = 1
-  image_size = (3, 227, 227)
+  image_size = (3, 277, 277) # 277
   images = np.zeros((batch_size,) + image_size, dtype='float32')
 
   in_image = scipy.misc.imread(path)
@@ -188,6 +189,8 @@ def activation_maximization(net, generator, gen_in_layer, gen_out_layer, start_c
   image_size = get_shape(data_shape)
   output_size = get_shape(generator_output_shape)
 
+  # os.mkdir("./debug/%s" % str(args.seed))
+
   # The top left offset that we start cropping the output image to get the 227x227 image
   topleft = ((output_size[0] - image_size[0])/2, (output_size[1] - image_size[1])/2)
 
@@ -262,7 +265,7 @@ def activation_maximization(net, generator, gen_in_layer, gen_out_layer, start_c
       # Print x every 10 iterations
       if debug:
         print " > %s " % i
-        name = "./debug/%s.jpg" % str(i).zfill(3)
+        name = "./debug/%s.jpg" % (str(i).zfill(3))
 
         save_image(x.copy(), name)
 
@@ -270,12 +273,12 @@ def activation_maximization(net, generator, gen_in_layer, gen_out_layer, start_c
         list_acts.append( (name, act) )
 
       # Stop if grad is 0
-      if grad_norm_generator == 0:
-        print " grad_norm_generator is 0"
-        break
-      elif grad_norm_net == 0:
-        print " grad_norm_net is 0"
-        break
+ #     if grad_norm_generator == 1:
+ #       print " grad_norm_generator is 0"
+ #       break
+ #     elif grad_norm_net == 0:
+ #       print " grad_norm_net is 0"
+ #       break
 
   # returning the resulting image
   print " -------------------------"
@@ -287,7 +290,7 @@ def activation_maximization(net, generator, gen_in_layer, gen_out_layer, start_c
       name = p[0]
       act = p[1]
 
-      write_label(name, act)
+      #write_label(name, act)
 
   return best_xx
 
@@ -316,6 +319,7 @@ def main():
   parser.add_argument('--clip', metavar='b', type=int, default=0, help='Clip out within a code range')
   parser.add_argument('--bound', metavar='b', type=str, default="", help='The file to an array that is the upper bound for activation range')
   parser.add_argument('--output_dir', metavar='b', type=str, default=".", help='Output directory for saving results')
+  parser.add_argument('--output_file', metavar='b', type=str, default=".", help='Output file for saving results')  
   parser.add_argument('--net_weights', metavar='b', type=str, default=settings.net_weights, help='Weights of the net being visualized')
   parser.add_argument('--net_definition', metavar='b', type=str, default=settings.net_definition, help='Definition of the net being visualized')
 
@@ -411,8 +415,17 @@ def main():
   print "Saved to %s" % filename
 
   if args.debug:
-    save_image(output_image, "./debug/%s.jpg" % str(args.n_iters).zfill(3))
-  
+  #  save_image(output_image, "./debug/%s.jpg" % str(args.n_iters.zfill(3)))
+    os.mkdir("./PORN/%s" % str(args.seed))
+    src = "./debug/"
+    dst = "./PORN/%s" % str(args.seed)
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        shutil.copy2(s, d)
 
 if __name__ == '__main__':
   main()
+
+
+

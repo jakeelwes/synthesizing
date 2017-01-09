@@ -998,3 +998,4 @@ n13052670 hen-of-the-woods, hen of the woods, Polyporus frondosus, Grifola frond
 n13054560 bolete
 n13133613 ear, spike, capitulum
 n15075141 toilet tissue, toilet paper, bathroom tissue
+computer
